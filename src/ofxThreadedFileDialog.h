@@ -6,6 +6,11 @@
 
 #include "tinyfiledialogs.h"
 
+struct ofxThreadedFileDialogResponse{
+    string      id;
+    string      filepath;
+};
+
 class ofxThreadedFileDialog: public ofThread{
 
 public:
@@ -30,18 +35,21 @@ public:
         openedFileEvent     = false;
         savedFileEvent      = false;
 
+        tempID              = "";
         tempTitle           = "";
         tempFileName        = "";
 
         startThread();
     }
 
-    void openFile(string title){
+    void openFile(string id, string title){
+        tempID              = id;
         tempTitle           = title;
         openDialogFinished  = false;
     }
 
-    void saveFile(string title,string filename){
+    void saveFile(string id, string title,string filename){
+        tempID              = id;
         tempTitle           = title;
         tempFileName        = filename;
         saveDialogFinished  = false;
@@ -102,6 +110,13 @@ public:
                 openDialogLoaded = false;
                 openedFileEvent = true;
                 loadedOpenCounter++;
+
+                ofxThreadedFileDialogResponse temp;
+                temp.id = tempID;
+                temp.filepath = lastFile;
+
+                ofNotifyEvent( fileDialogEvent, temp, this );
+
                 condition.notify_all();
             }
             if(!saveDialogFinished && openDialogFinished){
@@ -119,14 +134,24 @@ public:
                 saveDialogLoaded = false;
                 savedFileEvent = true;
                 loadedSaveCounter++;
+
+                ofxThreadedFileDialogResponse temp;
+                temp.id = tempID;
+                temp.filepath = lastFile;
+
+                ofNotifyEvent( fileDialogEvent, temp, this );
+
                 condition.notify_all();
             }
             sleep(10);
         }
     }
 
+    ofEvent<ofxThreadedFileDialogResponse>         fileDialogEvent;
+
 protected:
     std::condition_variable condition;
+    string                  tempID;
     string                  lastFile;
     string                  tempTitle;
     string                  tempFileName;

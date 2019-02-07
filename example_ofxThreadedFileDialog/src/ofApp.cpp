@@ -11,13 +11,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if(fileDialog.getHaveNewOpenFile()){
-        ofLog(OF_LOG_NOTICE,"opened file: %s", fileDialog.getLastFile().c_str());
-    }
-
-    if(fileDialog.getHaveNewSaveFile()){
-        ofLog(OF_LOG_NOTICE,"saved file: %s", fileDialog.getLastFile().c_str());
-    }
+    
 }
 
 //--------------------------------------------------------------
@@ -44,9 +38,9 @@ void ofApp::exit(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if(key == 'o'){
-        fileDialog.openFile("open new file");
+        fileDialog.openFile("open file","open new file");
     }else if(key == 's'){
-        fileDialog.saveFile("save file as","testing.txt");
+        fileDialog.saveFile("save file","save file as","testing.txt");
     }
 }
 
@@ -98,4 +92,13 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
 
+}
+
+//--------------------------------------------------------------
+void ofApp::onFileDialogResponse(ofxThreadedFileDialogResponse &response){
+    if(response.id == "open file"){
+        ofLog(OF_LOG_NOTICE,"opened file: %s", response.filepath.c_str());
+    }else if(response.id == "save file"){
+        ofLog(OF_LOG_NOTICE,"saved file: %s", response.filepath.c_str());
+    }
 }
