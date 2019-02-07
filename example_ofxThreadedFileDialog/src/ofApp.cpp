@@ -6,7 +6,7 @@ void ofApp::setup(){
 
     fileDialog.setup();
 
-    tinyfd_notifyPopup("ofxThreadedFileDialog", "a non-blocking cross-platform\nfile dialog based on http://tinyfiledialogs.sourceforge.net", "info");
+    tinyfd_notifyPopup("ofxThreadedFileDialog", "a non-blocking cross-platformfile dialog\nbased on http://tinyfiledialogs.sourceforge.net", "info");
 }
 
 //--------------------------------------------------------------
