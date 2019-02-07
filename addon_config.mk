@@ -18,7 +18,7 @@ meta:
 	ADDON_NAME = ofxThreadedFileDialog
 	ADDON_DESCRIPTION = a non-blocking cross-platform file dialogs based on http://tinyfiledialogs.sourceforge.net
 	ADDON_AUTHOR = Emanuele Mazza
-	ADDON_TAGS = "visual programming" "patching" "cyber-transmedia programming"
+	ADDON_TAGS = "utilities"
 	ADDON_URL = http://github.com/d3cod3/ofxThreadedFileDialog
 
 common:
