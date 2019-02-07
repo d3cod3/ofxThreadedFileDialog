@@ -1,32 +1,36 @@
-# Prerequisites
-*.d
+# QtCreator
+*.qbs.user
+*.pro.user
+*.pri
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Linux
+*~
+# KDE
+.directory
+.AppleDouble
 
-# Precompiled Headers
-*.gch
-*.pch
+# OSX
+.DS_Store
+*.swp
+*~.nib
+# Thumbnails
+._*
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
 
-# Fortran module files
-*.mod
-*.smod
+#########################
+# miscellaneous
+#########################
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
+.mailmap
 *.app
+*.dSYM
+example_ofxThreadedFileDialog/bin/.tmp
+bin/.tmp
+obj/
+**/build-example_ofxThreadedFileDialog-Desktop-Debug
+**/build-example_ofxThreadedFileDialog-Desktop-Release
