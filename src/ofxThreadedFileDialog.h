@@ -24,6 +24,10 @@ public:
         saveDialogFinished          = true;
         openDialogFolderFinished    = true;
 
+        openDialogLoaded            = false;
+        openFolderDialogLoaded      = false;
+        saveDialogLoaded            = false;
+
         tempID              = "";
         tempTitle           = "";
         tempFileName        = "";
@@ -56,6 +60,18 @@ public:
         condition.notify_all();
     }
 
+    bool getIsOpenFileLoaded(){
+        return openDialogLoaded;
+    }
+
+    bool getIsOpenFolderLoaded(){
+        return openFolderDialogLoaded;
+    }
+
+    bool getIsSaveFileLoaded(){
+        return saveDialogLoaded;
+    }
+
     string getLastFile(){
         return lastFile;
     }
@@ -64,6 +80,7 @@ public:
         while(isThreadRunning()){
             if(!openDialogFinished && saveDialogFinished && openDialogFolderFinished){
                 openDialogFinished = true;
+                openDialogLoaded = true;
                 char const * filepath = tinyfd_openFileDialog(tempTitle.c_str(),"",0,NULL,NULL,0);
                 if(filepath){
                     ofFile file(filepath);
@@ -74,6 +91,8 @@ public:
                     lastFile = "";
                 }
 
+                openDialogLoaded = false;
+
                 ofxThreadedFileDialogResponse temp;
                 temp.id = tempID;
                 temp.filepath = lastFile;
@@ -83,6 +102,7 @@ public:
                 condition.notify_all();
             }else if(!saveDialogFinished && openDialogFinished && openDialogFolderFinished){
                 saveDialogFinished = true;
+                saveDialogLoaded = true;
                 char const * filepath = tinyfd_saveFileDialog(tempTitle.c_str(),tempFileName.c_str(),0,NULL,NULL);
                 if(filepath){
                     ofFile newFile(filepath);
@@ -90,6 +110,8 @@ public:
                 }else{
                     lastFile = "";
                 }
+
+                saveDialogLoaded = false;
 
                 ofxThreadedFileDialogResponse temp;
                 temp.id = tempID;
@@ -100,6 +122,7 @@ public:
                 condition.notify_all();
             }else if(!openDialogFolderFinished && saveDialogFinished && openDialogFinished){
                 openDialogFolderFinished = true;
+                openFolderDialogLoaded = true;
                 char const * filepath = tinyfd_selectFolderDialog(tempTitle.c_str(), NULL);
                 if(filepath){
                     ofFile file(filepath);
@@ -109,6 +132,8 @@ public:
                 }else{
                     lastFile = "";
                 }
+
+                openFolderDialogLoaded = false;
 
                 ofxThreadedFileDialogResponse temp;
                 temp.id = tempID;
@@ -131,5 +156,8 @@ protected:
     bool                    openDialogFinished;
     bool                    openDialogFolderFinished;
     bool                    saveDialogFinished;
+    bool                    openDialogLoaded;
+    bool                    openFolderDialogLoaded;
+    bool                    saveDialogLoaded;
 
 };
