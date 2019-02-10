@@ -20,20 +20,9 @@ public:
     }
 
     void setup(){
-        openDialogFinished  = true;
-        saveDialogFinished  = true;
-
-        openDialogLoaded    = false;
-        saveDialogLoaded    = false;
-
-        loadingOpenCounter      = 0;
-        loadedOpenCounter       = 0;
-
-        loadingSaveCounter      = 0;
-        loadedSaveCounter       = 0;
-
-        openedFileEvent     = false;
-        savedFileEvent      = false;
+        openDialogFinished          = true;
+        saveDialogFinished          = true;
+        openDialogFolderFinished    = true;
 
         tempID              = "";
         tempTitle           = "";
@@ -46,6 +35,12 @@ public:
         tempID              = id;
         tempTitle           = title;
         openDialogFinished  = false;
+    }
+
+    void openFolder(string id, string title){
+        tempID                      = id;
+        tempTitle                   = title;
+        openDialogFolderFinished    = false;
     }
 
     void saveFile(string id, string title,string filename){
@@ -61,42 +56,14 @@ public:
         condition.notify_all();
     }
 
-    bool getIsOpenFileLoaded(){
-        return openDialogLoaded;
-    }
-
-    bool getIsSaveFileLoaded(){
-        return saveDialogLoaded;
-    }
-
-    bool getHaveNewOpenFile(){
-        if(loadingOpenCounter==loadedOpenCounter && openedFileEvent){
-            openedFileEvent = false;
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    bool getHaveNewSaveFile(){
-        if(loadingSaveCounter==loadedSaveCounter && savedFileEvent){
-            savedFileEvent = false;
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     string getLastFile(){
         return lastFile;
     }
 
     void threadedFunction(){
         while(isThreadRunning()){
-            if(!openDialogFinished && saveDialogFinished){
+            if(!openDialogFinished && saveDialogFinished && openDialogFolderFinished){
                 openDialogFinished = true;
-                openDialogLoaded = true;
-                loadingOpenCounter++;
                 char const * filepath = tinyfd_openFileDialog(tempTitle.c_str(),"",0,NULL,NULL,0);
                 if(filepath){
                     ofFile file(filepath);
@@ -107,10 +74,6 @@ public:
                     lastFile = "";
                 }
 
-                openDialogLoaded = false;
-                openedFileEvent = true;
-                loadedOpenCounter++;
-
                 ofxThreadedFileDialogResponse temp;
                 temp.id = tempID;
                 temp.filepath = lastFile;
@@ -118,11 +81,8 @@ public:
                 ofNotifyEvent( fileDialogEvent, temp, this );
 
                 condition.notify_all();
-            }
-            if(!saveDialogFinished && openDialogFinished){
+            }else if(!saveDialogFinished && openDialogFinished && openDialogFolderFinished){
                 saveDialogFinished = true;
-                saveDialogLoaded = true;
-                loadingSaveCounter++;
                 char const * filepath = tinyfd_saveFileDialog(tempTitle.c_str(),tempFileName.c_str(),0,NULL,NULL);
                 if(filepath){
                     ofFile newFile(filepath);
@@ -131,10 +91,6 @@ public:
                     lastFile = "";
                 }
 
-                saveDialogLoaded = false;
-                savedFileEvent = true;
-                loadedSaveCounter++;
-
                 ofxThreadedFileDialogResponse temp;
                 temp.id = tempID;
                 temp.filepath = lastFile;
@@ -142,6 +98,23 @@ public:
                 ofNotifyEvent( fileDialogEvent, temp, this );
 
                 condition.notify_all();
+            }else if(!openDialogFolderFinished && saveDialogFinished && openDialogFinished){
+                openDialogFolderFinished = true;
+                char const * filepath = tinyfd_selectFolderDialog(tempTitle.c_str(), NULL);
+                if(filepath){
+                    ofFile file(filepath);
+                    if (file.exists() && file.isDirectory()){
+                        lastFile = file.getAbsolutePath();
+                    }
+                }else{
+                    lastFile = "";
+                }
+
+                ofxThreadedFileDialogResponse temp;
+                temp.id = tempID;
+                temp.filepath = lastFile;
+
+                ofNotifyEvent( fileDialogEvent, temp, this );
             }
             sleep(10);
         }
@@ -155,15 +128,8 @@ protected:
     string                  lastFile;
     string                  tempTitle;
     string                  tempFileName;
-    int                     loadingOpenCounter;
-    int                     loadedOpenCounter;
-    int                     loadingSaveCounter;
-    int                     loadedSaveCounter;
-    bool                    openedFileEvent;
-    bool                    savedFileEvent;
     bool                    openDialogFinished;
+    bool                    openDialogFolderFinished;
     bool                    saveDialogFinished;
-    bool                    openDialogLoaded;
-    bool                    saveDialogLoaded;
 
 };
