@@ -93,11 +93,13 @@ public:
 
                 openDialogLoaded = false;
 
-                ofxThreadedFileDialogResponse temp;
-                temp.id = tempID;
-                temp.filepath = lastFile;
+                if(lastFile != ""){
+                    ofxThreadedFileDialogResponse temp;
+                    temp.id = tempID;
+                    temp.filepath = lastFile;
 
-                ofNotifyEvent( fileDialogEvent, temp, this );
+                    ofNotifyEvent( fileDialogEvent, temp, this );
+                }
 
                 condition.notify_all();
             }else if(!saveDialogFinished && openDialogFinished && openDialogFolderFinished){
@@ -113,11 +115,13 @@ public:
 
                 saveDialogLoaded = false;
 
-                ofxThreadedFileDialogResponse temp;
-                temp.id = tempID;
-                temp.filepath = lastFile;
+                if(lastFile != ""){
+                    ofxThreadedFileDialogResponse temp;
+                    temp.id = tempID;
+                    temp.filepath = lastFile;
 
-                ofNotifyEvent( fileDialogEvent, temp, this );
+                    ofNotifyEvent( fileDialogEvent, temp, this );
+                }
 
                 condition.notify_all();
             }else if(!openDialogFolderFinished && saveDialogFinished && openDialogFinished){
@@ -135,11 +139,13 @@ public:
 
                 openFolderDialogLoaded = false;
 
-                ofxThreadedFileDialogResponse temp;
-                temp.id = tempID;
-                temp.filepath = lastFile;
+                if(lastFile != ""){
+                    ofxThreadedFileDialogResponse temp;
+                    temp.id = tempID;
+                    temp.filepath = lastFile;
 
-                ofNotifyEvent( fileDialogEvent, temp, this );
+                    ofNotifyEvent( fileDialogEvent, temp, this );
+                }
             }
             sleep(10);
         }
