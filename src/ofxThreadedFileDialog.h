@@ -20,6 +20,7 @@ public:
     }
 
     void setup(){
+        notificationFinished        = true;
         openDialogFinished          = true;
         saveDialogFinished          = true;
         openDialogFolderFinished    = true;
@@ -30,9 +31,16 @@ public:
 
         tempID              = "";
         tempTitle           = "";
+        tempMessage         = "";
         tempFileName        = "";
 
         startThread();
+    }
+
+    void notificationPopup(string title, string message){
+        tempTitle               = title;
+        tempMessage             = message;
+        notificationFinished    = false;
     }
 
     void openFile(string id, string title){
@@ -147,6 +155,10 @@ public:
                     ofNotifyEvent( fileDialogEvent, temp, this );
                 }
             }
+            if(!notificationFinished){
+                notificationFinished = true;
+                tinyfd_notifyPopup(tempTitle.c_str(),tempMessage.c_str(), "info");
+            }
             sleep(10);
         }
     }
@@ -158,7 +170,9 @@ protected:
     string                  tempID;
     string                  lastFile;
     string                  tempTitle;
+    string                  tempMessage;
     string                  tempFileName;
+    bool                    notificationFinished;
     bool                    openDialogFinished;
     bool                    openDialogFolderFinished;
     bool                    saveDialogFinished;
